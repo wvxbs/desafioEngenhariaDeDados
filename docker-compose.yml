@@ -1,0 +1,6 @@
+services:
+  app:
+    image: wvxbs/desafioEngenhariaDeDados
+    build:
+      context: .
+      dockerfile: ./Dockerfile
