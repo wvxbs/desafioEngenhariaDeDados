@@ -1,16 +1,17 @@
-FROM python:3-slim
+FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
-
 ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+RUN mkdir -p /app/cache
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-WORKDIR /app
-COPY . /app
+COPY . .
 
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+WORKDIR /app/src
 
-CMD ["python", "index.py"]
+CMD ["python", "index.py"]      
