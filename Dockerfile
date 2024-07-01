@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-RUN mkdir -p /app/cache
+RUN mkdir -p /app/data/cache
+RUN mkdir -p /app/data/dataFrames
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
