@@ -28,24 +28,36 @@ O código coleta dados da Poke API, armazena-os em cache, salva-os em arquivos P
     ```
 
 ## Execução
-### Utilizando docker
+### Utilizando Docker
 1. Execute o comando:
     ```bash
     docker-compose up
     ```
 
 ### Rodando Localmente
-1. Certifique-se de que os diretórios `data/cache`, `data/dataFrames` e `data/duckdb` existam. Caso não existam, crie-os:
+1. Crie um ambiente virtual e ative-o:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # Linux/MacOS
+    venv\Scripts\activate  # Windows
+    ```
+
+2. Instale as dependências:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. Certifique-se de que os diretórios `data/cache`, `data/dataFrames` e `data/duckdb` existam. Caso não existam, crie-os:
     ```bash
     mkdir -p data/cache data/dataFrames data/duckdb
     ```
-2. Faça a seguinte alteração no arquivo `index.py`:
+4. Faça a seguinte alteração no arquivo `index.py`:
     ```bash
     cacheDirectory = "./data/cache/"
     databaseDirectory = "./data/duckdb/"
     dataframesDirectory = "./data/dataFrames/"
     ```
-4. Execute o programa:
+5. Execute o programa:
     ```bash
     python index.py
     ```
