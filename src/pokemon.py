@@ -1,19 +1,26 @@
 import requests
 import time
-from cache import loadCache, saveCache
+import pandas as pd
+from cacheManagement import loadCache, saveCache
+from dataframeManagement import createDataframes
 
 class Pokemon:
-    def __init__(self, baseUrl, cacheDirectory, cacheDuration):
+    def __init__(self, baseUrl, cacheDirectory, cacheDuration, dataframesDirectory):
         self.baseUrl = baseUrl
         self.offset = 0
         self.limit = 20
         self.cacheDirectory = cacheDirectory
         self.cacheDuration = cacheDuration
+        self.dataframesDirectory = dataframesDirectory
         self.cache, self.cacheTimestamp = loadCache(self.cacheDirectory)
-        self.allPokemon = self.cache.get('data', [])
+        self.allPokemonData = self.cache.get('data', [])
         self.dataFromCache = self.isCacheValid()
 
-        print(f"Dados carregados do cache {self.cacheTimestamp}") if self.dataFromCache else self.fetchEveryPokemon()
+        if self.dataFromCache:
+            print(f"Dados carregados do cache {self.cacheTimestamp}")
+        else:
+            self.fetchEveryPokemon()
+            saveCache(self.allPokemonData, self.cacheDirectory)
     
     def isCacheValid(self):
         return self.cacheTimestamp and (time.time() - self.cacheTimestamp < self.cacheDuration)
@@ -21,36 +28,40 @@ class Pokemon:
     def fetchData(self, url):
         try:
             response = requests.get(url)
-            if response.status_code == 200:
-                return response.json()
-            else:
-                print(f"Erro ao acessar a API: {response.status_code}")
-
+            response.raise_for_status()
+            return response.json()
         except requests.exceptions.RequestException as e:
             print(f"Erro na requisição: {e}")
-
-        return None
+            return None
 
     def parsePageData(self, data):
         return data.get("results", [])
     
+    def fetchSinglePokemonData(self, pokemonUrl):
+        pokemonId = pokemonUrl.rstrip('/').split('/')[-1]
+        pokemonData = self.fetchData(pokemonUrl)
+        return pokemonData, pokemonId
+    
     def fetchEveryPokemon(self):
+        print("Requisitando a lista completa de pokémons...")
+
         run = True
 
         while run:
             completeUrl = f"{self.baseUrl}?offset={self.offset}&limit={self.limit}"
-            completePageData = self.fetchData(completeUrl)
-            if completePageData:
-                self.allPokemon.extend(self.parsePageData(completePageData))
+            pageData = self.fetchData(completeUrl)
+            if pageData:
+                self.allPokemonData.extend(self.parsePageData(pageData))
+                for pokemon in pageData["results"]:
+                    pokemonData, pokemonId = self.fetchSinglePokemonData(pokemon["url"])
+                    createDataframes(pokemonData, pokemonId, self.dataframesDirectory)
 
-                if completePageData["next"]:
+                if pageData.get("next"):
                     self.offset += self.limit
                 else:
                     run = False
             else:
                 run = False
         
-        saveCache(self.allPokemon, self.cacheDirectory)
-        
     def getAllPokemon(self):
-        return self.allPokemon
+        return self.allPokemonData

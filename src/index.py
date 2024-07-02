@@ -1,7 +1,19 @@
 from pokemon import Pokemon
+from databaseQueries import DatabaseQueries
+from dataframeManagement import partitionDataframesByPokemonType
 
 def main():
-    base_url = "https://pokeapi.co/api/v2/pokemon"
-    Pokemon(base_url, "/app/cache", 3600)
+    baseUrl = "https://pokeapi.co/api/v2/pokemon"
+
+    cacheDirectory = "/app/data/cache/"
+    databaseDirectory = "/app/data/duckdb/"
+    dataframesDirectory = "/app/data/dataFrames/"
+
+    cacheDuration = 7200
+
+    Pokemon(baseUrl, cacheDirectory, cacheDuration, dataframesDirectory)
+    DatabaseQueries(databaseDirectory, dataframesDirectory)
+
+    partitionDataframesByPokemonType(dataframesDirectory)
 
 main()
