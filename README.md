@@ -39,7 +39,7 @@ O código coleta dados da Poke API, armazena-os em cache, salva-os em arquivos P
     ```bash
     mkdir -p data/cache data/dataFrames data/duckdb
     ```
-2. Faça a seguinte alteração no arquivo index.py:
+2. Faça a seguinte alteração no arquivo `index.py`:
     ```bash
     cacheDirectory = "./data/cache/"
     databaseDirectory = "./data/duckdb/"
@@ -57,27 +57,6 @@ O código coleta dados da Poke API, armazena-os em cache, salva-os em arquivos P
 - Salva os dados em arquivos Parquet para uso posterior.
 - Carrega os dados salvos em DuckDB e executa consultas com SQL.
 
-## Estrutura dos Arquivos
-
-### `index.py`
-
-Este é o ponto de entrada do programa. Ele inicializa as classes `Pokemon` e `DatabaseQueries`.
-
-### `pokemon.py`
-
-Esta classe coleta dados da PokeAPI e salva os resultados em DataFrames.
-
-### `dataframeManagement.py`
-
-Contém funções para criar e salvar DataFrames.
-
-### `cacheManagement.py`
-
-Contém funções para carregar e salvar cache.
-
-### `databaseQueries.py`
-
-Esta classe cria tabelas no DuckDB e executa várias consultas de análise.
 
 ## Consultas Realizadas
 
